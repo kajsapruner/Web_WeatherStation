@@ -1,39 +1,39 @@
-from machine import Pin
-import time
+from machine import Pin, Timer
+import utime
 
-# Define the pin connected to the reed switch
-reed_switch = Pin(0, Pin.IN, Pin.PULL_DOWN)
+# Pin setup
+reed_pin = Pin(0, Pin.IN, Pin.PULL_DOWN)
 
-# Variables to keep track of the wind speed calculation
-last_time = time.ticks_ms()
-rotations = 0
+# Variables to track the wind speed calculation
+last_activation = 0
+rotation_count = 0
 
-# Callback function to handle the interrupt
-def wind_speed_isr(pin):
-    global last_time, rotations
-    current_time = time.ticks_ms()
-    # Calculate time difference to debounce the sensor
-    if time.ticks_diff(current_time, last_time) > 1000:  # Debounce threshold 1000 ms
-        rotations += 1
-        last_time = current_time
+def reed_triggered(pin):
+    global last_activation, rotation_count
+    current_time = utime.ticks_ms()
+   
+    # Debounce the switch by ensuring at least 1 second between activations
+    if utime.ticks_diff(current_time, last_activation) > 1000:
+        rotation_count += 1
+        last_activation = current_time
+        print("Rotation detected!")
 
-# Attach the interrupt to the pin
-reed_switch.irq(trigger=Pin.IRQ_RISING, handler=wind_speed_isr)
+# Attach interrupt to the reed switch pin
+reed_pin.irq(trigger=Pin.IRQ_RISING, handler=reed_triggered)
 
-# Function to calculate wind speed
 def calculate_wind_speed():
-    global rotations
-    # Convert rotations to wind speed (Example: 1 rotation per second = 1 MPH)
-    # This conversion factor needs calibration
-    speed = rotations * (60 / 3600)  # Convert rotations per hour to rotations per minute
-    rotations = 0  # Reset rotation count
-    return speed
+    global rotation_count
+    # Calculate speed: Assuming 1 rotation per second equals 2 MPH (this is an example, adjust as needed)
+    wind_speed = rotation_count * 2
+    rotation_count = 0  # reset count after reading
+    
+    return wind_speed
 
-# Main loop to calculate wind speed every minute
+# Main loop
 try:
     while True:
-        time.sleep(60)  # Delay for 1 minute
-        wind_speed = calculate_wind_speed()
-        print(f"Current Wind Speed: {wind_speed:.2f} MPH")
+        utime.sleep(1)  # calculate speed every minute
+        speed = calculate_wind_speed()
+        print(f"Measured Wind Speed: {speed} MPH")
 except KeyboardInterrupt:
-    print("Program stopped.")
+    print("Stopped by user")
