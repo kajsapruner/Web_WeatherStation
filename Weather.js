@@ -3,7 +3,7 @@ var canvas = document.getElementById('canvas');
 var ctx = canvas.getContext('2d');
 
 // Function to update the canvas with weather data
-function updateWeather(temperature, humidity, pressure, altitude) {
+function updateWeather(temperature, humidity, pressure) {
     // Clear the canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -25,9 +25,4 @@ function updateWeather(temperature, humidity, pressure, altitude) {
     ctx.fillStyle = 'white';
     ctx.fillText("Pressure: " + pressure + " hPa", 30, 130);
 
-    // Draw altitude box
-    ctx.fillStyle = 'lightblue';
-    ctx.fillRect(140, 100, 100, 50);
-    ctx.fillStyle = 'white';
-    ctx.fillText("Altitude: " + altitude + " meters", 150, 130);
 }
