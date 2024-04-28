@@ -1,12 +1,14 @@
 var temperatureHistoryDiv = document.getElementById("temperature-history");
 var humidityHistoryDiv = document.getElementById("humidity-history");
 var pressureHistoryDiv = document.getElementById("pressure-history");
-var altitudeHistoryDiv = document.getElementById("altitude-history");
+var windSpeedHistoryDiv = document.getElementById("windSpeed-history");
+var rainFallHistoryDiv = document.getElementById("rainFall-history");
 
 var temperatureGaugeDiv = document.getElementById("temperature-gauge");
 var humidityGaugeDiv = document.getElementById("humidity-gauge");
 var pressureGaugeDiv = document.getElementById("pressure-gauge");
-var altitudeGaugeDiv = document.getElementById("altitude-gauge");
+var windSpeedGaugeDiv = document.getElementById("windSpeed-gauge");
+var rainFallGaugeDiv = document.getElementById("rainFall-gauge");
 
 // History Data
 var temperatureTrace = {
@@ -30,10 +32,17 @@ var pressureTrace = {
   mode: "lines+markers",
   type: "line",
 };
-var altitudeTrace = {
+var windSpeedTrace = {
   x: [],
   y: [],
-  name: "Altitude",
+  name: "Wind Speed",
+  mode: "lines+markers",
+  type: "line",
+};
+var rainFallTrace = {
+  x: [],
+  y: [],
+  name: "Rain Fall",
   mode: "lines+markers",
   type: "line",
 };
@@ -80,10 +89,24 @@ var pressureLayout = {
   height: 260,
   margin: { t: 30, b: 20, pad: 5 },
 };
-var altitudeLayout = {
+var windSpeedLayout = {
   autosize: false,
   title: {
-    text: "Altitude",
+    text: "Wind Speed",
+  },
+  font: {
+    size: 14,
+    color: "#7f7f7f",
+  },
+  colorway: ["#008080"],
+  width: 450,
+  height: 260,
+  margin: { t: 30, b: 20, pad: 5 },
+};
+var rainFallLayout = {
+  autosize: false,
+  title: {
+    text: "Rain Fall",
   },
   font: {
     size: 14,
@@ -98,7 +121,8 @@ var altitudeLayout = {
 Plotly.newPlot(temperatureHistoryDiv, [temperatureTrace], temperatureLayout);
 Plotly.newPlot(humidityHistoryDiv, [humidityTrace], humidityLayout);
 Plotly.newPlot(pressureHistoryDiv, [pressureTrace], pressureLayout);
-Plotly.newPlot(altitudeHistoryDiv, [altitudeTrace], altitudeLayout);
+Plotly.newPlot(windSpeedHistoryDiv, [windSpeedTrace], windSpeedLayout);
+Plotly.newPlot(rainFallHistoryDiv, [rainFallTrace], rainFallLayout);
 
 // Gauge Data
 var temperatureData = [
@@ -112,8 +136,8 @@ var temperatureData = [
     gauge: {
       axis: { range: [null, 50] },
       steps: [
-        { range: [0, 20], color: "lightgray" },
-        { range: [20, 30], color: "gray" },
+        { range: [0, 60], color: "lightgray" },
+        { range: [60, 80], color: "gray" },
       ],
       threshold: {
         line: { color: "red", width: 4 },
@@ -135,8 +159,8 @@ var humidityData = [
     gauge: {
       axis: { range: [null, 100] },
       steps: [
-        { range: [0, 20], color: "lightgray" },
-        { range: [20, 30], color: "gray" },
+        { range: [0, 50], color: "lightgray" },
+        { range: [50, 60], color: "gray" },
       ],
       threshold: {
         line: { color: "red", width: 4 },
@@ -158,8 +182,8 @@ var pressureData = [
     gauge: {
       axis: { range: [null, 1100] },
       steps: [
-        { range: [0, 300], color: "lightgray" },
-        { range: [300, 700], color: "gray" },
+        { range: [0, 900], color: "lightgray" },
+        { range: [900, 1100], color: "gray" },
       ],
       threshold: {
         line: { color: "red", width: 4 },
@@ -170,19 +194,42 @@ var pressureData = [
   },
 ];
 
-var altitudeData = [
+var windSpeedData = [
   {
     domain: { x: [0, 1], y: [0, 1] },
     value: 0,
-    title: { text: "Altitude" },
+    title: { text: "Wind Speed" },
     type: "indicator",
     mode: "gauge+number+delta",
     delta: { reference: 60 },
     gauge: {
       axis: { range: [null, 150] },
       steps: [
-        { range: [0, 50], color: "lightgray" },
-        { range: [50, 100], color: "gray" },
+        { range: [0, 3], color: "lightgray" },
+        { range: [3, 5], color: "gray" },
+      ],
+      threshold: {
+        line: { color: "red", width: 4 },
+        thickness: 0.75,
+        value: 30,
+      },
+    },
+  },
+];
+
+var rainFallData = [
+  {
+    domain: { x: [0, 1], y: [0, 1] },
+    value: 0,
+    title: { text: "Rain Fall" },
+    type: "indicator",
+    mode: "gauge+number+delta",
+    delta: { reference: 60 },
+    gauge: {
+      axis: { range: [null, 150] },
+      steps: [
+        { range: [0, 10], color: "lightgray" },
+        { range: [10, 20], color: "gray" },
       ],
       threshold: {
         line: { color: "red", width: 4 },
@@ -198,7 +245,8 @@ var layout = { width: 300, height: 250, margin: { t: 0, b: 0, l: 0, r: 0 } };
 Plotly.newPlot(temperatureGaugeDiv, temperatureData, layout);
 Plotly.newPlot(humidityGaugeDiv, humidityData, layout);
 Plotly.newPlot(pressureGaugeDiv, pressureData, layout);
-Plotly.newPlot(altitudeGaugeDiv, altitudeData, layout);
+Plotly.newPlot(windSpeedGaugeDiv, windSpeedData, layout);
+Plotly.newPlot(rainFallGaugeDiv, rainFallData, layout);
 
 // Will hold the arrays we receive from our BME280 sensor
 // Temperature
@@ -210,10 +258,12 @@ let newHumidityYArray = [];
 // Pressure
 let newPressureXArray = [];
 let newPressureYArray = [];
-// Altitude
-let newAltitudeXArray = [];
-let newAltitudeYArray = [];
-
+// windSpeed
+let newWindSpeedXArray = [];
+let newWindSpeedYArray = [];
+// rainFall
+let newRainFallXArray = [];
+let newRainFallYArray = [];
 // The maximum number of data points displayed on our scatter/line graph
 let MAX_GRAPH_POINTS = 12;
 let ctr = 0;
@@ -227,11 +277,13 @@ function updateSensorReadings() {
       let temperature = jsonResponse.temperature.toFixed(2);
       let humidity = jsonResponse.humidity.toFixed(2);
       let pressure = jsonResponse.pressure.toFixed(2);
-      //let altitude = jsonResponse.altitude.toFixed(2);
+      let windSpeed = jsonResponse.wind.toFixed(2);
+      let windDirection = jsonResponse.direction; 
+      let rainFall = jsonResponse.rain.toFixed(2);
 
-      updateBoxes(temperature, humidity, pressure, altitude);
+      updateBoxes(temperature, humidity, pressure, windSpeed, windDirection, rainFall);
 
-      updateGauge(temperature, humidity, pressure, altitude);
+      updateGauge(temperature, humidity, pressure, windSpeed, rainFall);
 
       // Update Temperature Line Chart
       updateCharts(
@@ -255,29 +307,39 @@ function updateSensorReadings() {
         pressure
       );
 
-      // Update Altitude Line Chart
+      // Update windSpeed Line Chart
       updateCharts(
-        altitudeHistoryDiv,
-        newAltitudeXArray,
-        newAltitudeYArray,
-        altitude
+        windSpeedHistoryDiv,
+        newWindSpeedXArray,
+        newWindSpeedYArray,
+        windSpeed
+      );
+
+      // Update rainFall Line Chart
+      updateCharts(
+        rainFallHistoryDiv,
+        newrainFallXArray,
+        newrainFallYArray,
+        rainFall
       );
     });
 }
 
-function updateBoxes(temperature, humidity, pressure, altitude) {
+function updateBoxes(temperature, humidity, pressure, windSpeed, windDirection, rainFall) {
   let temperatureDiv = document.getElementById("temperature");
   let humidityDiv = document.getElementById("humidity");
   let pressureDiv = document.getElementById("pressure");
-  let altitudeDiv = document.getElementById("altitude");
+  let windSpeedDiv = document.getElementById("windSpeed");
+  let rainFallDiv = document.getElementById("rainFall");
 
-  temperatureDiv.innerHTML = temperature + " C";
+  temperatureDiv.innerHTML = temperature + " F";
   humidityDiv.innerHTML = humidity + " %";
-  pressureDiv.innerHTML = pressure + " hPa";
-  altitudeDiv.innerHTML = altitude + " m";
+  pressureDiv.innerHTML = pressure + " Pa";
+  windSpeedDiv.innerHTML = windSpeed + " MPH " + windDirection;
+  rainFallDiv.innerHTML = rainFall + " mL";
 }
 
-function updateGauge(temperature, humidity, pressure, altitude) {
+function updateGauge(temperature, humidity, pressure, windSpeed, rainFall) {
   var temperature_update = {
     value: temperature,
   };
@@ -287,13 +349,18 @@ function updateGauge(temperature, humidity, pressure, altitude) {
   var pressure_update = {
     value: pressure,
   };
-  var altitude_update = {
-    value: altitude,
+  var windSpeed_update = {
+    value: windSpeed,
+  };
+  var rainFall_update = {
+    value: rainFall,
   };
   Plotly.update(temperatureGaugeDiv, temperature_update);
   Plotly.update(humidityGaugeDiv, humidity_update);
   Plotly.update(pressureGaugeDiv, pressure_update);
-  Plotly.update(altitudeGaugeDiv, altitude_update);
+  Plotly.update(windSpeedGaugeDiv, windSpeed_update);
+  Plotly.update(rainFallGaugeDiv, rainFall_update);
+
 }
 
 function updateCharts(lineChartDiv, xArray, yArray, sensorRead) {
