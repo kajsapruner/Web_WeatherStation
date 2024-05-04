@@ -12,7 +12,7 @@ def sensor_data():
     global json_data
     data = request.get_json()
     json_data = jsonify(data)
-    return jsonify(data)
+    return "Sensor Data recieved"
 
 @app.route('/get-sensor-data')
 def get_sensor_data():

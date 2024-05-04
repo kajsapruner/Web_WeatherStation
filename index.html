@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta http-equiv="X-UA-Compatible" content="ie=edge" />
-    <title>Raspberry Pi Pico W BME280 Weather Station</title>
+    <title>Raspberry Pi Pico W Weather Station</title>
     <link
       href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
       rel="stylesheet"
@@ -16,7 +16,7 @@
     <section class="home-section">
       <nav>
         <div class="sidebar-button">
-          <span class="dashboard">Raspberry Pi Pico W: BME280 Weather Station</span>
+          <span class="dashboard">Raspberry Pi Pico W: Weather Station</span>
         </div>
       </nav>
       <div class="home-content">
@@ -44,8 +44,15 @@
           </div>
           <div class="box">
             <div class="right-side">
-              <div class="box-topic">Approx Altitude</div>
-              <div class="number" id="altitude"></div>
+              <div class="box-topic">Wind Speed</div>
+              <div class="number" id="windSpeed"></div>
+            </div>
+            <i class="bx bxs-building readings four"></i>
+          </div>
+          <div class="box">
+            <div class="right-side">
+              <div class="box-topic">Rain Fall</div>
+              <div class="number" id="rainFall"></div>
             </div>
             <i class="bx bxs-building readings four"></i>
           </div>
@@ -57,10 +64,11 @@
               <div class="history-col-item">
                 <div id="temperature-history" class="history-divs"></div>
                 <div id="humidity-history" class="history-divs"></div>
+                <div id="rainFall-history" class="history-divs"></div>
               </div>
               <div class="history-col-item">
                 <div id="pressure-history" class="history-divs"></div>
-                <div id="altitude-history" class="history-divs"></div>
+                <div id="windSpeed-history" class="history-divs"></div>
               </div>
             </div>
           </div>
@@ -70,7 +78,8 @@
               <div class="gauge-box"><div id="temperature-gauge"></div></div>
               <div class="gauge-box"><div id="humidity-gauge"></div></div>
               <div class="gauge-box"><div id="pressure-gauge"></div></div>
-              <div class="gauge-box"><div id="altitude-gauge"></div></div>
+              <div class="gauge-box"><div id="windSpeed-gauge"></div></div>
+              <div class="gauge-box"><div id="rainFall-gauge"></div></div>
             </div>
           </div>
         </div>
